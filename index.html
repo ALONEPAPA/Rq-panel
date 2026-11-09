@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RQ Panel</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#111216;color:#e8eaf2;font:16px Arial,sans-serif}
+header{padding:22px 5%;background:#202024;border-bottom:1px solid #41434b;display:flex;justify-content:space-between;align-items:center}
+h1{font-size:23px;margin:0}small,.muted{color:#9298a5}.badge{background:#06351f;color:#35d47c;padding:9px 13px;border-radius:22px}
+nav{display:flex;gap:8px;padding:14px 5%;overflow:auto;background:#1c1d21}
+nav button{white-space:nowrap;background:#292a30;color:#bfc4d0;border:0;border-radius:9px;padding:11px 15px}
+nav button.active{background:#252c55;color:#aab6ff}
+main{max-width:1000px;margin:24px auto;padding:0 18px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.card{background:#202024;border:1px solid #4a4d56;border-radius:20px;padding:22px;margin-bottom:16px}
+.label{color:#9da3b0}.num{font-size:42px;font-weight:bold;margin:12px 0;color:#39d77c}.blue{color:#69aaff}.purple{color:#bd8bff}.orange{color:#f5a21a}
+h2{font-size:20px;margin:0 0 18px}.row{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid #383a41}
+input{width:100%;padding:13px;margin:8px 0 16px;background:#15161a;color:white;border:1px solid #555965;border-radius:10px;font-size:16px}
+button,.btn{cursor:pointer;border:0;border-radius:10px;padding:12px 17px;background:#293dc4;color:white;font-size:15px}
+.switch{background:#343740;color:#dce0eb}.on{background:#07552e;color:#62e99c}
+.log{font:13px monospace;color:#72b8d8;background:#08090c;padding:14px;border-radius:12px;line-height:2;overflow:auto}
+.page{display:none}.page.show{display:block}.note{font-size:13px;color:#a1a6b1;line-height:1.6}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.card{padding:18px}.num{font-size:36px}header{padding:18px}}
+</style></head>
+<body>
+<header><div><h1>🤖 RQ Panel</h1><small>Channel Management Dashboard</small></div><span class="badge">● Demo Live</span></header>
+<nav>
+<button class="active" onclick="show('dash',this)">🏠 Dashboard</button>
+<button onclick="show('accounts',this)">👥 Accounts</button>
+<button onclick="show('react',this)">🎯 Auto React</button>
+<button onclick="show('vc',this)">🎙️ VC Tools</button>
+<button onclick="show('settings',this)">⚙️ Settings</button>
+</nav>
+<main>
+<section id="dash" class="page show">
+<div class="grid">
+<div class="card"><div class="label">Connected Accounts</div><div class="num">0</div><small>Connect an authorized account</small></div>
+<div class="card"><div class="label">Managed Channels</div><div class="num blue">0</div><small>Channels you administer</small></div>
+<div class="card"><div class="label">Reactions</div><div class="num purple">—</div><small>View channel insights</small></div>
+<div class="card"><div class="label">Voice Chats</div><div class="num orange">—</div><small>Manage manually</small></div>
+</div>
+<div class="card"><h2>📋 Recent Logs</h2><div class="log" id="logs">15:30:01  ● RQ Panel started<br>15:30:02  ● Demo mode enabled<br>15:30:03  ● Waiting for authorized setup...</div></div>
+</section>
+<section id="accounts" class="page"><div class="card"><h2>👥 Account Management</h2><p class="muted">Add only accounts you own or are authorized to manage.</p><label>Account label</label><input id="acc" placeholder="e.g. My channel account"><button onclick="addAccount()">＋ Add account label</button><p id="accountList" class="note">No account labels added.</p></div></section>
+<section id="react" class="page"><div class="card"><h2>🎯 Reaction Settings</h2><p class="note">Use Telegram's normal in-app controls or approved integrations for channels you administer. This preview does not send reactions or generate views.</p><label>Channel username</label><input placeholder="@your_channel"><div class="row"><span>Reaction feature preview</span><button class="switch" onclick="demoToggle(this)">OFF</button></div></div></section>
+<section id="vc" class="page"><div class="card"><h2>🎙️ Voice Chat Tools</h2><p class="note">This section is a management shortcut preview only. It does not auto-join accounts or operate voice chats.</p><label>Channel / Group</label><input placeholder="@your_group"><div class="row"><span>Voice chat status</span><span class="badge">Manual control</span></div></div></section>
+<section id="settings" class="page">
+<div class="card"><h2>🔗 Server Connection</h2><p class="note">For a real backend, connect a secured server you control. Do not expose bot tokens, API keys or passwords in this HTML file.</p><label>Server URL</label><input placeholder="https://your-domain.example/api"><button onclick="log('Server settings saved locally (demo only).')">💾 Save settings</button></div>
+<div class="card"><h2>✉️ Access Message</h2><input id="msg" value="Contact the panel administrator for access."><button onclick="log('Access message saved locally (demo only).')">💾 Save</button></div>
+</section>
+<p class="note">RQ Panel • Front-end demo • No account actions or Telegram API requests are performed.</p>
+</main>
+<script>
+function show(id,b){document.querySelectorAll('.page').forEach(x=>x.classList.remove('show'));document.getElementById(id).classList.add('show');document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active')}
+function log(t){let d=new Date().toLocaleTimeString();document.getElementById('logs').innerHTML+=`<br>${d}  ● ${t}`}
+function demoToggle(b){let on=b.textContent==='OFF';b.textContent=on?'ON':'OFF';b.classList.toggle('on',on);log('Reaction preview '+(on?'enabled':'disabled')+' (demo).')}
+function addAccount(){let v=document.getElementById('acc').value.trim();if(!v)return;let p=document.getElementById('accountList');p.textContent=(p.textContent.includes('No account')?'':p.textContent+' • ')+v;document.getElementById('acc').value='';log('Account label added (local only).')}
+</script></body></html>
